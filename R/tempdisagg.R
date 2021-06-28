@@ -47,7 +47,7 @@ temporaldisaggregation<-function(series, constant=T, trend=F, indicators=NULL,
   }else{
     jindicators<-.jnull("[Ldemetra/timeseries/TsData;")
   }
-  jrslt<-.jcall("demetra/benchmarking/r/TemporalDisaggregation", "Ldemetra/benchmarking/r/TemporalDisaggregation$Results;",
+  jrslt<-.jcall("demetra/benchmarking/r/TemporalDisaggregation", "Ldemetra/tempdisagg/univariate/TemporalDisaggregationResults;",
                 "process", jseries, constant, trend, jindicators, model, as.integer(freq), conversion, as.integer(conversion.obsposition),rho, rho.fixed, rho.truncated,
                 zeroinitialization, diffuse.algorithm, diffuse.regressors)
 
