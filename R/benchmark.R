@@ -145,7 +145,7 @@ multivariatecholette<-function(xlist, tcvector=NULL, ccvector=NULL, rho=1, lambd
   #create the input
   jdic=.jnew("demetra.util.r.Dictionary")
   for(i in seq_along(xlist)){
-    .jcall(jdic, "V", "add", names(xlist[i]), ts_r2jd(xlist[[i]]))
+    .jcall(jdic, "V", "add", names(xlist[i]), .JD3_ENV$ts_r2jd(xlist[[i]]))
   }
   if (is.null(tcvector)){
     ntc=0
@@ -177,7 +177,7 @@ multivariatecholette<-function(xlist, tcvector=NULL, ccvector=NULL, rho=1, lambd
   for(i in seq_along(rnames)){
     jts<-.jcall(jd_rslt, "Ldemetra/timeseries/TsData;", "get", rnames[i])
     if (! is.jnull(jts)){
-      rlist[[rnames[i]]]<-ts_jd2r(jts)
+      rlist[[rnames[i]]]<-.JD3_ENV$ts_jd2r(jts)
     }
   }
   return (rlist)

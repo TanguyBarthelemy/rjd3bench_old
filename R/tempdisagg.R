@@ -82,9 +82,6 @@ temporaldisaggregation<-function(series, constant=T, trend=F, indicators=NULL,
     estimation=estimation,
     likelihood=likelihood),
     class="JD3TempDisagg"))
-
-
-
 }
 
 #' Temporal disaggregation without indicator
