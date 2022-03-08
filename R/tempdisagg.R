@@ -1,3 +1,5 @@
+#' @include utils.R
+NULL
 
 #' Temporal disaggregation of a time series by regression models. Includes Chow-Lin, Fernandez, Litterman and some variants of those algorithms
 #'
@@ -31,15 +33,15 @@ temporaldisaggregation<-function(series, constant=T, trend=F, indicators=NULL,
   if (model!="Ar1" && !zeroinitialization){
     constant=F
   }
-  jseries<-.JD3_ENV$ts_r2jd(series)
+  jseries<-rjd3toolkit:::ts_r2jd(series)
   jlist<-list()
   if (!is.null(indicators)){
     if (is.list(indicators)){
       for (i in 1:length(indicators)){
-        jlist[[i]]<-.JD3_ENV$ts_r2jd(indicators[[i]])
+        jlist[[i]]<-rjd3toolkit:::ts_r2jd(indicators[[i]])
       }
     }else if (is.ts(indicators)){
-      jlist[[1]]<-.JD3_ENV$ts_r2jd(indicators)
+      jlist[[1]]<-rjd3toolkit:::ts_r2jd(indicators)
     }else{
       stop("Invalid indicators")
     }
@@ -47,14 +49,14 @@ temporaldisaggregation<-function(series, constant=T, trend=F, indicators=NULL,
   }else{
     jindicators<-.jnull("[Ldemetra/timeseries/TsData;")
   }
-  jrslt<-.jcall("demetra/benchmarking/r/TemporalDisaggregation", "Ldemetra/tempdisagg/univariate/TemporalDisaggregationResults;",
+  jrslt<-.jcall("demetra/benchmarking/r/TemporalDisaggregation", "Ljdplus/tempdisagg/univariate/TemporalDisaggregationResults;",
                 "process", jseries, constant, trend, jindicators, model, as.integer(freq), conversion, as.integer(conversion.obsposition),rho, rho.fixed, rho.truncated,
                 zeroinitialization, diffuse.algorithm, diffuse.regressors)
 
   # Build the S3 result
-  bcov<-.JD3_ENV$proc_matrix(jrslt, "covar")
-  vars<-.JD3_ENV$proc_vector(jrslt, "regnames")
-  coef<-.JD3_ENV$proc_vector(jrslt, "coeff")
+  bcov<-rjd3toolkit:::proc_matrix(jrslt, "covar")
+  vars<-rjd3toolkit:::proc_vector(jrslt, "regnames")
+  coef<-rjd3toolkit:::proc_vector(jrslt, "coeff")
   se<-sqrt(diag(bcov))
   t<-coef/se
   m<-data.frame(coef, se, t)
@@ -67,15 +69,15 @@ temporaldisaggregation<-function(series, constant=T, trend=F, indicators=NULL,
     cov=bcov
   )
   estimation<-list(
-    disagg=.JD3_ENV$proc_ts(jrslt, "disagg"),
-    edisagg=.JD3_ENV$proc_ts(jrslt, "edisagg"),
-    regeffect=.JD3_ENV$proc_ts(jrslt, "regeffect"),
-    smoothingpart=.JD3_ENV$proc_numeric(jrslt, "smoothingpart"),
-    parameter=.JD3_ENV$proc_numeric(jrslt, "parameter"),
-    eparameter=.JD3_ENV$proc_numeric(jrslt, "eparameter")
+    disagg=rjd3toolkit:::proc_ts(jrslt, "disagg"),
+    edisagg=rjd3toolkit:::proc_ts(jrslt, "edisagg"),
+    regeffect=rjd3toolkit:::proc_ts(jrslt, "regeffect"),
+    smoothingpart=rjd3toolkit:::proc_numeric(jrslt, "smoothingpart"),
+    parameter=rjd3toolkit:::proc_numeric(jrslt, "parameter"),
+    eparameter=rjd3toolkit:::proc_numeric(jrslt, "eparameter")
     # res= TODO
   )
-  likelihood<-.JD3_ENV$proc_likelihood(jrslt, "likelihood.")
+  likelihood<-rjd3toolkit:::proc_likelihood(jrslt, "likelihood.")
 
   return(structure(list(
     regression=regression,
@@ -104,12 +106,12 @@ temporaldisaggregation2<-function(series, indicator, model=c("Ar1", "Rw"),
                          rho=0, rho.fixed=F, rho.truncated=0){
   model=match.arg(model)
   conversion=match.arg(conversion)
-  jseries=.JD3_ENV$ts_r2jd(series)
+  jseries=rjd3toolkit:::ts_r2jd(series)
   jlist<-list()
-  jindicator<-.JD3_ENV$ts_r2jd(indicator)
+  jindicator<-rjd3toolkit:::ts_r2jd(indicator)
   jrslt<-.jcall("demetra/benchmarking/r/TemporalDisaggregation", "Ldemetra/timeseries/TsData;",
                 "processI", jseries, jindicator, model, conversion, as.integer(conversion.obsposition),rho, rho.fixed, rho.truncated)
-  return (.JD3_ENV$ts_jd2r(jrslt))
+  return (rjd3toolkit:::ts_jd2r(jrslt))
 }
 
 #' Title
@@ -124,7 +126,7 @@ logLik.JD3TempDisagg<-function(object){
   if (is.null(object@internal)){
     NaN
   }else{
-    .JD3_ENV$proc_numeric(object@internal, "likelihood.ll")}
+    rjd3toolkit:::proc_numeric(object@internal, "likelihood.ll")}
 }
 
 #' Title
