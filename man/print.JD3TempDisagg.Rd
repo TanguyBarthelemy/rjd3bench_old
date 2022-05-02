@@ -4,10 +4,10 @@
 \alias{print.JD3TempDisagg}
 \title{Title}
 \usage{
-\method{print}{JD3TempDisagg}(object)
+\method{print}{JD3TempDisagg}(x, ...)
 }
 \arguments{
-\item{object}{}
+\item{x}{}
 }
 \value{
 

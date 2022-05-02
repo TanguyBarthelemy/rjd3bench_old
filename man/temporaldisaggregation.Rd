@@ -22,7 +22,7 @@ temporaldisaggregation(
 )
 }
 \arguments{
-\item{series}{The time series taht will be disaggregated}
+\item{series}{The time series that will be disaggregated}
 
 \item{constant}{Constant term (T/F)}
 
@@ -38,21 +38,27 @@ temporaldisaggregation(
 
 \item{conversion.obsposition}{Only used with "UserDefined" mode. Position of the observed indicator in the aggregated periods (for instance 7th month of the year)}
 
-\item{rho}{Only used with Ar1/RwAr1 models. Initial value of the parameter}
+\item{rho}{Only used with Ar1/RwAr1 models. (Initial) value of the parameter}
 
-\item{rho.fixed}{Fixed rho (T/F)}
+\item{rho.fixed}{Fixed rho (T/F, F by default)}
 
 \item{rho.truncated}{Range for Rho evaluation (in [rho.truncated, 1[)}
 
-\item{zeroinitialization}{Initial values of auto-regressive models are fixed to 0}
+\item{zeroinitialization}{The initial values of an auto-regressive model are fixed to 0 (T/F, F by default)}
 
-\item{diffuse.algorithm}{Algorithm used for diffuse initialization}
+\item{diffuse.algorithm}{Algorithm used for diffuse initialization. "SqrtDiffuse" by default}
 
 \item{diffuse.regressors}{Indicates if the coefficients of the regression model are diffuse (T) or fixed unknown (F, default)}
 }
 \value{
-
+An object of class "JD3TempDisagg"
 }
 \description{
 Temporal disaggregation of a time series by regression models. Includes Chow-Lin, Fernandez, Litterman and some variants of those algorithms
+}
+\examples{
+Y<-rjd3toolkit::aggregate(rjd3toolkit::retail$RetailSalesTotal, 1)
+x<-rjd3toolkit::retail$FoodAndBeverageStores
+td<-rjd3bench::temporaldisaggregation(Y, indicators=x)
+y<-td$estimation$disagg
 }

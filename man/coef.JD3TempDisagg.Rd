@@ -4,7 +4,7 @@
 \alias{coef.JD3TempDisagg}
 \title{Title}
 \usage{
-\method{coef}{JD3TempDisagg}(object)
+\method{coef}{JD3TempDisagg}(object, ...)
 }
 \arguments{
 \item{object}{}

@@ -4,7 +4,7 @@
 \alias{logLik.JD3TempDisagg}
 \title{Title}
 \usage{
-\method{logLik}{JD3TempDisagg}(object)
+\method{logLik}{JD3TempDisagg}(object, ...)
 }
 \arguments{
 \item{object}{}

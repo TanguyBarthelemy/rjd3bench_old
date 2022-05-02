@@ -14,11 +14,11 @@ NULL
 #'
 #' @export
 denton<-function(s, t, d=1, mul=TRUE, modified=TRUE, conversion="Sum", obsposition=1){
-  jd_s<-rjd3toolkit:::ts_r2jd(s)
-  jd_t<-rjd3toolkit:::ts_r2jd(t)
+  jd_s<-rjd3toolkit::ts_r2jd(s)
+  jd_t<-rjd3toolkit::ts_r2jd(t)
   jd_rslt<-.jcall("demetra/benchmarking/r/Benchmarking", "Ldemetra/timeseries/TsData;", "denton"
                   ,jd_s, jd_t, as.integer(d), mul, modified, conversion, as.integer(obsposition))
-  rjd3toolkit:::ts_jd2r(jd_rslt)
+  rjd3toolkit::ts_jd2r(jd_rslt)
 }
 
 #' Benchmarking by means of the Denton method without indicator
@@ -37,10 +37,10 @@ denton<-function(s, t, d=1, mul=TRUE, modified=TRUE, conversion="Sum", obspositi
 #'
 #' @examples
 denton2<-function(nfreq, t, d=1, mul=TRUE, modified=TRUE, conversion="Sum", obsposition=1){
-  jd_t<-rjd3toolkit:::ts_r2jd(t)
+  jd_t<-rjd3toolkit::ts_r2jd(t)
   jd_rslt<-.jcall("demetra/benchmarking/r/Benchmarking", "Ldemetra/timeseries/TsData;", "denton"
                   ,as.integer(nfreq), jd_t, as.integer(d), mul, modified, conversion, as.integer(obsposition))
-  rjd3toolkit:::ts_jd2r(jd_rslt)
+  rjd3toolkit::ts_jd2r(jd_rslt)
 }
 
 #' Benchmarking following the growth rate preservation principle.
@@ -57,11 +57,11 @@ denton2<-function(nfreq, t, d=1, mul=TRUE, modified=TRUE, conversion="Sum", obsp
 #'
 #' @examples
 grp<-function(s, t, conversion="Sum", obsposition=1, eps=1e-12, iter=500, denton=T){
-  jd_s<-rjd3toolkit:::ts_r2jd(s)
-  jd_t<-rjd3toolkit:::ts_r2jd(t)
+  jd_s<-rjd3toolkit::ts_r2jd(s)
+  jd_t<-rjd3toolkit::ts_r2jd(t)
   jd_rslt<-.jcall("demetra/benchmarking/r/Benchmarking", "Ldemetra/timeseries/TsData;", "grp"
                   ,jd_s, jd_t, conversion, as.integer(obsposition), eps, as.integer(iter), as.logical(denton))
-  rjd3toolkit:::ts_jd2r(jd_rslt)
+  rjd3toolkit::ts_jd2r(jd_rslt)
 }
 
 #' Benchmarking by means of cubic splines
@@ -76,11 +76,11 @@ grp<-function(s, t, conversion="Sum", obsposition=1, eps=1e-12, iter=500, denton
 #'
 #' @examples
 cubicspline<-function(s, t, conversion="Sum", obsposition=1){
-  jd_s<-rjd3toolkit:::ts_r2jd(s)
-  jd_t<-rjd3toolkit:::ts_r2jd(t)
+  jd_s<-rjd3toolkit::ts_r2jd(s)
+  jd_t<-rjd3toolkit::ts_r2jd(t)
   jd_rslt<-.jcall("demetra/benchmarking/r/Benchmarking", "Ldemetra/timeseries/TsData;", "cubicSpline"
                   ,jd_s, jd_t, conversion, as.integer(obsposition))
-  rjd3toolkit:::ts_jd2r(jd_rslt)
+  rjd3toolkit::ts_jd2r(jd_rslt)
 }
 
 #' Benchmarking (without indicator) by means of cubic splines
@@ -95,10 +95,10 @@ cubicspline<-function(s, t, conversion="Sum", obsposition=1){
 #'
 #' @examples
 cubicspline2<-function(nfreq, t, conversion="Sum", obsposition=1){
-  jd_t<-rjd3toolkit:::ts_r2jd(t)
+  jd_t<-rjd3toolkit::ts_r2jd(t)
   jd_rslt<-.jcall("demetra/benchmarking/r/Benchmarking", "Ldemetra/timeseries/TsData;", "cubicSpline"
                   ,as.integer(nfreq), jd_t, conversion, as.integer(obsposition))
-  rjd3toolkit:::ts_jd2r(jd_rslt)
+  rjd3toolkit::ts_jd2r(jd_rslt)
 }
 
 
@@ -121,11 +121,11 @@ cubicspline2<-function(nfreq, t, conversion="Sum", obsposition=1){
 #'
 #'
 cholette<-function(s, t, rho=1, lambda=1, bias="None", conversion="Sum", obsposition=1){
-  jd_s<-rjd3toolkit:::ts_r2jd(s)
-  jd_t<-rjd3toolkit:::ts_r2jd(t)
+  jd_s<-rjd3toolkit::ts_r2jd(s)
+  jd_t<-rjd3toolkit::ts_r2jd(t)
   jd_rslt<-.jcall("demetra/benchmarking/r/Benchmarking", "Ldemetra/timeseries/TsData;", "cholette"
                   ,jd_s, jd_t, rho, lambda, bias, conversion, as.integer(obsposition))
-  rjd3toolkit:::ts_jd2r(jd_rslt)
+  rjd3toolkit::ts_jd2r(jd_rslt)
 }
 
 #' Multi-variate Cholette
@@ -147,7 +147,7 @@ multivariatecholette<-function(xlist, tcvector=NULL, ccvector=NULL, rho=1, lambd
   #create the input
   jdic=.jnew("demetra.util.r.Dictionary")
   for(i in seq_along(xlist)){
-    .jcall(jdic, "V", "add", names(xlist[i]), rjd3toolkit:::ts_r2jd(xlist[[i]]))
+    .jcall(jdic, "V", "add", names(xlist[i]), rjd3toolkit::ts_r2jd(xlist[[i]]))
   }
   if (is.null(tcvector)){
     ntc=0
@@ -179,7 +179,7 @@ multivariatecholette<-function(xlist, tcvector=NULL, ccvector=NULL, rho=1, lambd
   for(i in seq_along(rnames)){
     jts<-.jcall(jd_rslt, "Ldemetra/timeseries/TsData;", "get", rnames[i])
     if (! is.jnull(jts)){
-      rlist[[rnames[i]]]<-rjd3toolkit:::ts_jd2r(jts)
+      rlist[[rnames[i]]]<-rjd3toolkit::ts_jd2r(jts)
     }
   }
   return (rlist)

@@ -4,7 +4,7 @@
 \alias{summary.JD3TempDisagg}
 \title{Title}
 \usage{
-\method{summary}{JD3TempDisagg}(object)
+\method{summary}{JD3TempDisagg}(object, ...)
 }
 \arguments{
 \item{object}{}
