@@ -2,7 +2,7 @@
 % Please edit documentation in R/tempdisagg.R
 \name{temporaldisaggregation}
 \alias{temporaldisaggregation}
-\title{Temporal disaggregation of a time series by regression models. Includes Chow-Lin, Fernandez, Litterman and some variants of those algorithms}
+\title{Temporal disaggregation of a time series by regression models.}
 \usage{
 temporaldisaggregation(
   series,
@@ -22,13 +22,13 @@ temporaldisaggregation(
 )
 }
 \arguments{
-\item{series}{The time series that will be disaggregated}
+\item{series}{The time series that will be disaggregated. It must be a ts object.}
 
-\item{constant}{Constant term (T/F)}
+\item{constant}{Constant term (T/F). Only used with Ar1 model when zeroinitialization=F}
 
 \item{trend}{Linear trend (T/F)}
 
-\item{indicators}{High-frequency indicator used in the temporal disaggregation}
+\item{indicators}{High-frequency indicator(s) used in the temporal disaggregation. It must be a (list of) ts object(s).}
 
 \item{model}{Model of the error term (at the disaggregated level). "Ar1" = Chow-Lin, "Rw" = Fernandez, "RwAr1" = Litterman}
 
@@ -54,11 +54,23 @@ temporaldisaggregation(
 An object of class "JD3TempDisagg"
 }
 \description{
-Temporal disaggregation of a time series by regression models. Includes Chow-Lin, Fernandez, Litterman and some variants of those algorithms
+Perform temporal disaggregation of low frequency to high frequency time
+series by regression models. Models included are Chow-Lin, Fernandez,
+Litterman and some variants of those algorithms.
 }
 \examples{
+# retail data, chow-lin with monthly indicator
 Y<-rjd3toolkit::aggregate(rjd3toolkit::retail$RetailSalesTotal, 1)
 x<-rjd3toolkit::retail$FoodAndBeverageStores
 td<-rjd3bench::temporaldisaggregation(Y, indicators=x)
 y<-td$estimation$disagg
+
+# qna data, fernandez with/without quarterly indicator
+data("qna_data")
+Y<-ts(qna_data$B1G_Y_data[,"B1G_FF"], frequency=1, start=c(2009,1))
+x<-ts(qna_data$TURN_Q_data[,"TURN_INDEX_FF"], frequency=4, start=c(2009,1))
+td1<-rjd3bench::temporaldisaggregation(Y, indicators=x, model = "Rw")
+td2<-rjd3bench::temporaldisaggregation(Y, model = "Rw")
+mod1<- td1$regression$model
+
 }

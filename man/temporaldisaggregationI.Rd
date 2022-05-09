@@ -2,13 +2,12 @@
 % Please edit documentation in R/tempdisagg.R
 \name{temporaldisaggregationI}
 \alias{temporaldisaggregationI}
-\title{Temporal disaggregation using the model: x(t) = a + b y(t), where x(t) is the indicator, 
+\title{Temporal disaggregation using the model: x(t) = a + b y(t), where x(t) is the indicator,
 y(t) is the unknown target series, with low-frequency constraints on y.}
 \usage{
 temporaldisaggregationI(
   series,
   indicator,
-  model = c("Ar1", "Rw"),
   conversion = c("Sum", "Average", "Last", "First", "UserDefined"),
   conversion.obsposition = 1,
   rho = 0,
@@ -17,11 +16,9 @@ temporaldisaggregationI(
 )
 }
 \arguments{
-\item{series}{The time series that will be disaggregated}
+\item{series}{The time series that will be disaggregated. It must be a ts object.}
 
-\item{indicator}{High-frequency indicator used in the temporal disaggregation}
-
-\item{model}{Model of the error term (at the disaggregated level). "Ar1" = Chow-Lin, "Rw" = Fernandez, "RwAr1" = Litterman}
+\item{indicator}{High-frequency indicator used in the temporal disaggregation. It must be a ts object.}
 
 \item{conversion}{Conversion mode (Usually "Sum" or "Average")}
 
@@ -32,19 +29,27 @@ temporaldisaggregationI(
 \item{rho.fixed}{Fixed rho (T/F, F by default)}
 
 \item{rho.truncated}{Range for Rho evaluation (in [rho.truncated, 1[)}
-
-\item{freq}{Annual frequency of the disaggregated variable. Used if no indicator is provided}
 }
 \value{
 An object of class "JD3TempDisaggI"
 }
 \description{
-Temporal disaggregation using the model: x(t) = a + b y(t), where x(t) is the indicator, 
+Temporal disaggregation using the model: x(t) = a + b y(t), where x(t) is the indicator,
 y(t) is the unknown target series, with low-frequency constraints on y.
 }
 \examples{
+# retail data, monthly indicator
 Y<-rjd3toolkit::aggregate(rjd3toolkit::retail$RetailSalesTotal, 1)
 x<-rjd3toolkit::retail$FoodAndBeverageStores
 td<-rjd3bench::temporaldisaggregationI(Y, indicator=x)
 y<-td$estimation$disagg
+
+# qna data, quarterly indicator
+data("qna_data")
+Y<-ts(qna_data$B1G_Y_data[,"B1G_CE"], frequency=1, start=c(2009,1))
+x<-ts(qna_data$TURN_Q_data[,"TURN_INDEX_CE"], frequency=4, start=c(2009,1))
+td<-rjd3bench::temporaldisaggregationI(Y, indicator=x)
+a<-td$regression$a
+b<-td$regression$b
+
 }

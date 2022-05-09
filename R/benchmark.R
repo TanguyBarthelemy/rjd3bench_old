@@ -1,62 +1,86 @@
-#' @imclude utils.R
+#' @include utils.R
 NULL
 
 #' Benchmarking by means of the Denton method.
 #'
-#' @param s Disaggregated series. Mandatory
-#' @param t Aggregation constraint. Mandatory
+#' Denton method relies on the principle of movement preservation. There exist
+#' a few variants corresponding to different definitions of movement
+#' preservation: additive first difference (AFD), proportional first difference
+#' (PFD), additive second difference (ASD), proportional second difference
+#' (PSD), etc. The default and most widely adopted is the Denton PFD method.
+#'
+#' @param s Disaggregated series. If not NULL, it must be the same class as t.
+#' @param t Aggregation constraint. Mandatory. it must be either an object of class ts or a numeric vector.
 #' @param d Differencing order. 1 by default
 #' @param mul Multiplicative or additive benchmarking. Multiplicative by default
+#' @param nfreq Annual frequency of the disaggregated variable. Used if no disaggregated series is provided.
 #' @param modified Modified (TRUE) or unmodified (FALSE) Denton. Modified by default
-#' @param conversion Conversion rule. Should be "Sum" or "Average". Sum by default.
-#' @param obsposition Postion of the observation in the aggregated period (only used with "UserDefined" conversion)
+#' @param conversion Conversion rule. Usually "Sum" or "Average". Sum by default.
+#' @param obsposition Position of the observation in the aggregated period (only used with "UserDefined" conversion)
 #' @return The benchmarked series is returned
 #'
 #' @export
-denton<-function(s, t, d=1, mul=TRUE, modified=TRUE, conversion="Sum", obsposition=1){
-  jd_s<-rjd3toolkit::ts_r2jd(s)
+#' @examples
+#' Y<-ts(qna_data$B1G_Y_data$B1G_FF, frequency=1, start=c(2009,1))
+#'
+#' # denton PFD without high frequency series
+#' y1<-rjd3bench::denton(t=Y, nfreq=4)
+#'
+#' # denton ASD
+#' x1<-y1+rnorm(n=length(y1), mean=0, sd=10)
+#' y2<-rjd3bench::denton(s=x1, t=Y, d=2, mul=FALSE)
+#'
+#' # denton PFD used for temporal disaggregation
+#' x2 <- ts(qna_data$TURN_Q_data[,"TURN_INDEX_FF"], frequency=4, start=c(2009,1))
+#' y3<-rjd3bench::denton(s=x2, t=Y)
+#'
+denton<-function(s=NULL, t, d=1, mul=TRUE, nfreq=4, modified=TRUE,
+                 conversion=c("Sum", "Average", "Last", "First", "UserDefined"),
+                 obsposition=1){
+
+  conversion=match.arg(conversion)
+
   jd_t<-rjd3toolkit::ts_r2jd(t)
+
+  if (!is.null(s)){
+    jd_s<-rjd3toolkit::ts_r2jd(s)
+  } else{
+    jd_s<-as.integer(nfreq)
+  }
   jd_rslt<-.jcall("demetra/benchmarking/r/Benchmarking", "Ldemetra/timeseries/TsData;", "denton"
                   ,jd_s, jd_t, as.integer(d), mul, modified, conversion, as.integer(obsposition))
   rjd3toolkit::ts_jd2r(jd_rslt)
 }
 
-#' Benchmarking by means of the Denton method without indicator
-#'
-#'
-#' @param nfreq
-#' @param t Aggregation constraint. Mandatory
-#' @param d Differencing order. 1 by default
-#' @param mul Multiplicative or additive benchmarking. Multiplicative by default
-#' @param modified Modified (TRUE) or unmodified (FALSE) Denton. Modified by default
-#' @param conversion Conversion rule. Should be "Sum" or "Average". Sum by default.
-#' @param obsposition Postion of the observation in the aggregated period (only used with "UserDefined" conversion)
-#'
-#' @return The benchmarked series is returned
-#' @export
-#'
-#' @examples
-denton2<-function(nfreq, t, d=1, mul=TRUE, modified=TRUE, conversion="Sum", obsposition=1){
-  jd_t<-rjd3toolkit::ts_r2jd(t)
-  jd_rslt<-.jcall("demetra/benchmarking/r/Benchmarking", "Ldemetra/timeseries/TsData;", "denton"
-                  ,as.integer(nfreq), jd_t, as.integer(d), mul, modified, conversion, as.integer(obsposition))
-  rjd3toolkit::ts_jd2r(jd_rslt)
-}
 
 #' Benchmarking following the growth rate preservation principle.
+#'
 #' This method corresponds to the method of Cauley and Trager, using the solution
 #' proposed by Di Fonzo and Marini.
 #'
-#' @param s
-#' @param t
-#' @param conversion
+#' @param s Disaggregated series. Mandatory. It must be a ts object.
+#' @param t Aggregation constraint. Mandatory. It must be a ts object.
+#' @param conversion Conversion rule. Usually "Sum" or "Average". Sum by default.
 #' @param obsposition Postion of the observation in the aggregated period (only used with "UserDefined" conversion)
+#' @param eps
+#' @param iter
+#' @param denton
 #'
 #' @return
 #' @export
 #'
 #' @examples
-grp<-function(s, t, conversion="Sum", obsposition=1, eps=1e-12, iter=500, denton=T){
+#' data("qna_data")
+#' Y<-ts(qna_data$B1G_Y_data[,"B1G_FF"], frequency=1, start=c(2009,1))
+#' x<-ts(qna_data$TURN_Q_data[,"TURN_INDEX_FF"], frequency=4, start=c(2009,1))
+#' y<-rjd3bench::grp(s=x, t=Y)
+#'
+grp<-function(s, t,
+              conversion=c("Sum", "Average", "Last", "First", "UserDefined"),
+              obsposition=1, eps=1e-12, iter=500, denton=T){
+
+  conversion=match.arg(conversion)
+
   jd_s<-rjd3toolkit::ts_r2jd(s)
   jd_t<-rjd3toolkit::ts_r2jd(t)
   jd_rslt<-.jcall("demetra/benchmarking/r/Benchmarking", "Ldemetra/timeseries/TsData;", "grp"
@@ -66,38 +90,54 @@ grp<-function(s, t, conversion="Sum", obsposition=1, eps=1e-12, iter=500, denton
 
 #' Benchmarking by means of cubic splines
 #'
-#' @param s
-#' @param t
-#' @param conversion
+#' Cubic splines are piecewise cubic functions that are linked together in
+#' a way to guarantee smoothness at data points. Additivity constraints are
+#' added for benchmarking purpose and sub-period estimates are derived
+#' from each spline. When a sub-period indicator (or disaggregated series) is
+#' used, cubic splines are no longer drawn based on the low frequency data
+#' but the Benchmark-to-Indicator (BI ratio) is the one being smoothed. Sub-
+#' period estimates are then simply the product between the smoothed high
+#' frequency BI ratio and the indicator.
+#'
+#' @param s Disaggregated series. If not NULL, it must be the same class as t.
+#' @param t Aggregation constraint. Mandatory. it must be either an object of class ts or a numeric vector.
+#' @param nfreq Annual frequency of the disaggregated variable. Used if no disaggregated series is provided.
+#' @param conversion Conversion rule. Usually "Sum" or "Average". Sum by default.
 #' @param obsposition Postion of the observation in the aggregated period (only used with "UserDefined" conversion)
 #'
 #' @return
 #' @export
 #'
 #' @examples
-cubicspline<-function(s, t, conversion="Sum", obsposition=1){
-  jd_s<-rjd3toolkit::ts_r2jd(s)
+#' data("qna_data")
+#' Y<-ts(qna_data$B1G_Y_data[,"B1G_FF"], frequency=1, start=c(2009,1))
+#'
+#' # cubic spline without disaggregated series
+#' y1<-rjd3bench::cubicspline(t=Y, nfreq=4)
+#'
+#' # cubic spline with disaggregated series
+#' x1<-y1+rnorm(n=length(y1), mean=0, sd=10)
+#' y2<-rjd3bench::cubicspline(s=x1, t=Y)
+#'
+#' # cubic splines used for temporal disaggregation
+#' x2<-ts(qna_data$TURN_Q_data[,"TURN_INDEX_FF"], frequency=4, start=c(2009,1))
+#' y3<-rjd3bench::cubicspline(s=x2, t=Y)
+#'
+cubicspline<-function(s=NULL, t, nfreq=4,
+                      conversion=c("Sum", "Average", "Last", "First", "UserDefined"),
+                      obsposition=1){
+
+  conversion=match.arg(conversion)
+
   jd_t<-rjd3toolkit::ts_r2jd(t)
+
+  if (!is.null(s)){
+    jd_s<-rjd3toolkit::ts_r2jd(s)
+  } else{
+    jd_s<-as.integer(nfreq)
+  }
   jd_rslt<-.jcall("demetra/benchmarking/r/Benchmarking", "Ldemetra/timeseries/TsData;", "cubicSpline"
                   ,jd_s, jd_t, conversion, as.integer(obsposition))
-  rjd3toolkit::ts_jd2r(jd_rslt)
-}
-
-#' Benchmarking (without indicator) by means of cubic splines
-#'
-#' @param nfreq
-#' @param t
-#' @param conversion
-#' @param obsposition Postion of the observation in the aggregated period (only used with "UserDefined" conversion)
-#'
-#' @return
-#' @export
-#'
-#' @examples
-cubicspline2<-function(nfreq, t, conversion="Sum", obsposition=1){
-  jd_t<-rjd3toolkit::ts_r2jd(t)
-  jd_rslt<-.jcall("demetra/benchmarking/r/Benchmarking", "Ldemetra/timeseries/TsData;", "cubicSpline"
-                  ,as.integer(nfreq), jd_t, conversion, as.integer(obsposition))
   rjd3toolkit::ts_jd2r(jd_rslt)
 }
 

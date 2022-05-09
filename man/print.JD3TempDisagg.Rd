@@ -2,16 +2,23 @@
 % Please edit documentation in R/tempdisagg.R
 \name{print.JD3TempDisagg}
 \alias{print.JD3TempDisagg}
-\title{Title}
+\title{Print function for object of class JD3TempDisagg}
 \usage{
 \method{print}{JD3TempDisagg}(x, ...)
 }
 \arguments{
-\item{x}{}
+\item{x}{an object of class JD3TempDisagg}
 }
 \value{
 
 }
 \description{
-Title
+Print function for object of class JD3TempDisagg
+}
+\examples{
+Y<-rjd3toolkit::aggregate(rjd3toolkit::retail$RetailSalesTotal, 1)
+x<-rjd3toolkit::retail$FoodAndBeverageStores
+td<-rjd3bench::temporaldisaggregation(Y, indicator=x)
+print(td)
+
 }

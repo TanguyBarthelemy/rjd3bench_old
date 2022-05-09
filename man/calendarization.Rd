@@ -2,9 +2,7 @@
 % Please edit documentation in R/calendarization.R
 \name{calendarization}
 \alias{calendarization}
-\title{Title Calendarization 
-Based on "Calendarization with splines and state space models" B. Quenneville, F.Picard and S.Fortier Appl. Statistics (2013) 62, part 3, pp 371-399.
-State space implementation.}
+\title{Calendarization}
 \usage{
 calendarization(
   calendarobs,
@@ -32,13 +30,12 @@ calendarization(
 
 }
 \description{
-Title Calendarization 
 Based on "Calendarization with splines and state space models" B. Quenneville, F.Picard and S.Fortier Appl. Statistics (2013) 62, part 3, pp 371-399.
 State space implementation.
 }
 \examples{
 obs<-list(
-    list(start="1980-01-01", end="1989-12-31", value=100), 
+    list(start="1980-01-01", end="1989-12-31", value=100),
     list(start="1990-01-01", end="1999-12-31", value=-10),
     list(start="2000-01-01", end="2002-12-31", value=50))
 cal<-calendarization(obs, 4, end="2003-12-31", stde=TRUE)

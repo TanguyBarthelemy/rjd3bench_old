@@ -1,4 +1,8 @@
-#' Title Calendarization 
+#' @include utils.R
+NULL
+
+#' Calendarization
+#'
 #' Based on "Calendarization with splines and state space models" B. Quenneville, F.Picard and S.Fortier Appl. Statistics (2013) 62, part 3, pp 371-399.
 #' State space implementation.
 #'
@@ -6,15 +10,15 @@
 #' @param freq Annual frequency. If 0, only the daily series are computed
 #' @param start Starting day of the calendarization. Could be before the calendar obs (extrapolation)
 #' @param end Final day of the calendarization. Could be after the calendar obs (extrapolation)
-#' @param dailyweights Daily weights. Should have the same length as the requested series 
-#' @param stde 
+#' @param dailyweights Daily weights. Should have the same length as the requested series
+#' @param stde
 #'
 #' @return
 #' @export
 #'
 #' @examples
 #' obs<-list(
-#'     list(start="1980-01-01", end="1989-12-31", value=100), 
+#'     list(start="1980-01-01", end="1989-12-31", value=100),
 #'     list(start="1990-01-01", end="1999-12-31", value=-10),
 #'     list(start="2000-01-01", end="2002-12-31", value=50))
 #' cal<-calendarization(obs, 4, end="2003-12-31", stde=TRUE)
@@ -39,7 +43,7 @@ calendarization<-function(calendarobs, freq, start=NULL, end=NULL, dailyweights=
   }
   jrslt<-.jcall("demetra/benchmarking/r/Calendarization", "Ldemetra/calendarization/CalendarizationResults;",
                 "process", jcal, as.integer(freq), jstart, jend, jw, as.logical(stde))
-  
+
   if (stde){
     rslt<-rjd3toolkit::proc_ts(jrslt, "agg")
     erslt<-rjd3toolkit::proc_ts(jrslt, "eagg")
