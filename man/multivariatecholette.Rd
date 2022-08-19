@@ -15,9 +15,6 @@ multivariatecholette(
 \arguments{
 \item{lambda}{}
 }
-\value{
-
-}
 \description{
 Multi-variate Cholette
 }

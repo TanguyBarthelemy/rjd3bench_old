@@ -25,9 +25,6 @@ grp(
 
 \item{denton}{}
 }
-\value{
-
-}
 \description{
 This method corresponds to the method of Cauley and Trager, using the solution
 proposed by Di Fonzo and Marini.

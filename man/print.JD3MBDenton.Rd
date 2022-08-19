@@ -9,9 +9,6 @@
 \arguments{
 \item{x}{an object of class JD3MBDenton}
 }
-\value{
-
-}
 \description{
 Print function for object of class JD3MBDenton
 }

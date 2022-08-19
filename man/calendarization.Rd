@@ -26,9 +26,6 @@ calendarization(
 
 \item{stde}{}
 }
-\value{
-
-}
 \description{
 Based on "Calendarization with splines and state space models" B. Quenneville, F.Picard and S.Fortier Appl. Statistics (2013) 62, part 3, pp 371-399.
 State space implementation.

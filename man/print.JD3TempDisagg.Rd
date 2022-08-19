@@ -9,9 +9,6 @@
 \arguments{
 \item{x}{an object of class JD3TempDisagg}
 }
-\value{
-
-}
 \description{
 Print function for object of class JD3TempDisagg
 }

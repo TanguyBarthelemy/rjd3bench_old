@@ -9,9 +9,6 @@
 \arguments{
 \item{object}{an object of class JD3TempDisaggI}
 }
-\value{
-
-}
 \description{
 Summary function for object of class JD3TempDisaggI
 }
