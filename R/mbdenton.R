@@ -26,7 +26,7 @@ NULL
 #' # retail data, monthly indicator
 #' Y<-rjd3toolkit::aggregate(rjd3toolkit::retail$RetailSalesTotal, 1)
 #' x<-rjd3toolkit::aggregate(rjd3toolkit::retail$FoodAndBeverageStores, 4)
-#' td<-rjd3bench::denton.modelbased(Y, x, outliers = list("2000-01-01"=100, "2005-07-01"=100))
+#' td<-rjd3bench::denton_modelbased(Y, x, outliers = list("2000-01-01"=100, "2005-07-01"=100))
 #' y<-td$estimation$edisagg
 #'
 #' # qna data, quarterly indicator
@@ -34,8 +34,8 @@ NULL
 #' Y<-ts(qna_data$B1G_Y_data[,"B1G_FF"], frequency=1, start=c(2009,1))
 #' x<-ts(qna_data$TURN_Q_data[,"TURN_INDEX_FF"], frequency=4, start=c(2009,1))
 #'
-#' td1<-rjd3bench::denton.modelbased(Y,x)
-#' td2<-rjd3bench::denton.modelbased(Y, x, outliers = list("2020-04-01"=100))
+#' td1<-rjd3bench::denton_modelbased(Y,x)
+#' td2<-rjd3bench::denton_modelbased(Y, x, outliers = list("2020-04-01"=100))
 #'
 #' bi1<-td1$estimation$biratio
 #' bi2<-td2$estimation$biratio
@@ -46,12 +46,12 @@ NULL
 #' ts.plot(y1,y2,gpars=list(col=c("red","blue")))
 #' }
 #'
-denton.modelbased<-function(series, indicator, differencing=1, conversion=c("Sum", "Average", "Last", "First", "UserDefined"), conversion.obsposition=1,
+denton_modelbased<-function(series, indicator, differencing=1, conversion=c("Sum", "Average", "Last", "First", "UserDefined"), conversion.obsposition=1,
                             outliers=NULL){
 
   conversion=match.arg(conversion)
 
-  jseries=rjd3toolkit::ts_r2jd(series)
+  jseries=rjd3toolkit::.r2jd_ts(series)
   if (is.null(outliers)){
     odates=.jcast(.jnull(), "[Ljava/lang/String;")
     ovars=.jnull("[D")
@@ -59,17 +59,18 @@ denton.modelbased<-function(series, indicator, differencing=1, conversion=c("Sum
     odates=.jarray(names(outliers))
     ovars=.jarray(as.numeric(outliers))
   }
-  jindicator<-rjd3toolkit::ts_r2jd(indicator)
-  jrslt<-.jcall("demetra/benchmarking/r/TemporalDisaggregation", "Ljdplus/tempdisagg/univariate/ModelBasedDentonResults;",
-                "processModelBasedDenton", jseries, jindicator, as.integer(1), conversion, as.integer(conversion.obsposition), odates, ovars)
+  jindicator<-rjd3toolkit::.r2jd_ts(indicator)
+  jrslt<-.jcall("jdplus/benchmarking/base/r/TemporalDisaggregation", "Ljdplus/benchmarking/base/core/univariate/ModelBasedDentonResults;",
+                "processModelBasedDenton", jseries, jindicator, as.integer(1), conversion, as.integer(conversion.obsposition), odates, ovars, 
+                .jcast(.jnull(), "[Ljava/lang/String;"), .jnull("[D"))
   # Build the S3 result
   estimation<-list(
-    disagg=rjd3toolkit::proc_ts(jrslt, "disagg"),
-    edisagg=rjd3toolkit::proc_ts(jrslt, "edisagg"),
-    biratio=rjd3toolkit::proc_ts(jrslt, "biratio"),
-    ebiratio=rjd3toolkit::proc_ts(jrslt, "ebiratio")
+    disagg=rjd3toolkit::.proc_ts(jrslt, "disagg"),
+    edisagg=rjd3toolkit::.proc_ts(jrslt, "edisagg"),
+    biratio=rjd3toolkit::.proc_ts(jrslt, "biratio"),
+    ebiratio=rjd3toolkit::.proc_ts(jrslt, "ebiratio")
   )
-  likelihood<-rjd3toolkit::proc_likelihood (jrslt, "ll")
+  likelihood<-rjd3toolkit::.proc_likelihood (jrslt, "ll")
 
   return(structure(list(
     estimation=estimation,
@@ -87,7 +88,7 @@ denton.modelbased<-function(series, indicator, differencing=1, conversion=c("Sum
 #' @examples
 #' Y<-rjd3toolkit::aggregate(rjd3toolkit::retail$RetailSalesTotal, 1)
 #' x<-rjd3toolkit::aggregate(rjd3toolkit::retail$FoodAndBeverageStores, 4)
-#' td<-rjd3bench::denton.modelbased(Y, x, outliers = list("2000-01-01"=100, "2005-07-01"=100))
+#' td<-rjd3bench::denton_modelbased(Y, x, outliers = list("2000-01-01"=100, "2005-07-01"=100))
 #' print(td)
 #'
 print.JD3MBDenton<-function(x, ...){
@@ -112,7 +113,7 @@ print.JD3MBDenton<-function(x, ...){
 #' @examples
 #' Y<-rjd3toolkit::aggregate(rjd3toolkit::retail$RetailSalesTotal, 1)
 #' x<-rjd3toolkit::aggregate(rjd3toolkit::retail$FoodAndBeverageStores, 4)
-#' td<-rjd3bench::denton.modelbased(Y, x, outliers = list("2000-01-01"=100, "2005-07-01"=100))
+#' td<-rjd3bench::denton_modelbased(Y, x, outliers = list("2000-01-01"=100, "2005-07-01"=100))
 #' summary(td)
 #'
 summary.JD3MBDenton<-function(object, ...){

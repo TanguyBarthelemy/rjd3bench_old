@@ -1,4 +1,5 @@
 #' @include utils.R
+#' @import rjd3toolkit
 NULL
 
 .onLoad <- function(libname, pkgname) {
@@ -11,5 +12,7 @@ NULL
 #  proto.dir <- system.file("proto", package = pkgname)
 #  RProtoBuf::readProtoFiles2(protoPath = proto.dir)
 
+  # reload extractors
+  .jcall("jdplus/toolkit/base/api/information/InformationExtractors", "V", "reloadExtractors")
 }
 

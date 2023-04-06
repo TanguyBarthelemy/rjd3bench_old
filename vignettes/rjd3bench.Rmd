@@ -98,7 +98,7 @@ This alternative representation of Denton PFD method is interesting as it allows
 
 Model-based denton can be called through the **denton.modelbased()** function. Here is an example of code to apply it to the same data as before.
 ```{r, mb_denton_example, fig.height=6, fig.width=6}
-td_mbd<-rjd3bench::denton.modelbased(Y, x, outliers = list("2020-01-01"=100, "2020-04-01"=100))
+td_mbd<-rjd3bench::denton_modelbased(Y, x, outliers = list("2020-01-01"=100, "2020-04-01"=100))
 y_mbd<-td_mbd$estimation$disagg
 plot(td_mbd)
 ```

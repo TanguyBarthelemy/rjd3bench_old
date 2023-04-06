@@ -40,16 +40,16 @@ denton<-function(s=NULL, t, d=1, mul=TRUE, nfreq=4, modified=TRUE,
 
   conversion=match.arg(conversion)
 
-  jd_t<-rjd3toolkit::ts_r2jd(t)
+  jd_t<-rjd3toolkit::.r2jd_ts(t)
 
   if (!is.null(s)){
-    jd_s<-rjd3toolkit::ts_r2jd(s)
+    jd_s<-rjd3toolkit::.r2jd_ts(s)
   } else{
     jd_s<-as.integer(nfreq)
   }
-  jd_rslt<-.jcall("demetra/benchmarking/r/Benchmarking", "Ldemetra/timeseries/TsData;", "denton"
+  jd_rslt<-.jcall("jdplus/benchmarking/base/r/Benchmarking", "Ljdplus/toolkit/base/api/timeseries/TsData;", "denton"
                   ,jd_s, jd_t, as.integer(d), mul, modified, conversion, as.integer(obsposition))
-  rjd3toolkit::ts_jd2r(jd_rslt)
+  rjd3toolkit::.jd2r_ts(jd_rslt)
 }
 
 
@@ -81,11 +81,11 @@ grp<-function(s, t,
 
   conversion=match.arg(conversion)
 
-  jd_s<-rjd3toolkit::ts_r2jd(s)
-  jd_t<-rjd3toolkit::ts_r2jd(t)
-  jd_rslt<-.jcall("demetra/benchmarking/r/Benchmarking", "Ldemetra/timeseries/TsData;", "grp"
+  jd_s<-rjd3toolkit::.r2jd_ts(s)
+  jd_t<-rjd3toolkit::.r2jd_ts(t)
+  jd_rslt<-.jcall("jdplus/benchmarking/base/r/Benchmarking", "Ljdplus/toolkit/base/api/timeseries/TsData;", "grp"
                   ,jd_s, jd_t, conversion, as.integer(obsposition), eps, as.integer(iter), as.logical(denton))
-  rjd3toolkit::ts_jd2r(jd_rslt)
+  rjd3toolkit::.jd2r_ts(jd_rslt)
 }
 
 #' Benchmarking by means of cubic splines
@@ -129,16 +129,16 @@ cubicspline<-function(s=NULL, t, nfreq=4,
 
   conversion=match.arg(conversion)
 
-  jd_t<-rjd3toolkit::ts_r2jd(t)
+  jd_t<-rjd3toolkit::.r2jd_ts(t)
 
   if (!is.null(s)){
-    jd_s<-rjd3toolkit::ts_r2jd(s)
+    jd_s<-rjd3toolkit::.r2jd_ts(s)
   } else{
     jd_s<-as.integer(nfreq)
   }
-  jd_rslt<-.jcall("demetra/benchmarking/r/Benchmarking", "Ldemetra/timeseries/TsData;", "cubicSpline"
+  jd_rslt<-.jcall("jdplus/benchmarking/base/r/Benchmarking", "Ljdplus/toolkit/base/api/timeseries/TsData;", "cubicSpline"
                   ,jd_s, jd_t, conversion, as.integer(obsposition))
-  rjd3toolkit::ts_jd2r(jd_rslt)
+  rjd3toolkit::.jd2r_ts(jd_rslt)
 }
 
 
@@ -161,11 +161,11 @@ cubicspline<-function(s=NULL, t, nfreq=4,
 #'
 #'
 cholette<-function(s, t, rho=1, lambda=1, bias="None", conversion="Sum", obsposition=1){
-  jd_s<-rjd3toolkit::ts_r2jd(s)
-  jd_t<-rjd3toolkit::ts_r2jd(t)
-  jd_rslt<-.jcall("demetra/benchmarking/r/Benchmarking", "Ldemetra/timeseries/TsData;", "cholette"
+  jd_s<-rjd3toolkit::.r2jd_ts(s)
+  jd_t<-rjd3toolkit::.r2jd_ts(t)
+  jd_rslt<-.jcall("jdplus/benchmarking/base/r/Benchmarking", "Ljdplus/toolkit/base/api/timeseries/TsData;", "cholette"
                   ,jd_s, jd_t, rho, lambda, bias, conversion, as.integer(obsposition))
-  rjd3toolkit::ts_jd2r(jd_rslt)
+  rjd3toolkit::.jd2r_ts(jd_rslt)
 }
 
 #' Multi-variate Cholette
@@ -185,9 +185,9 @@ multivariatecholette<-function(xlist, tcvector=NULL, ccvector=NULL, rho=1, lambd
     stop("incorrect argument, first argument should be a list of at least 3 time series")}
 
   #create the input
-  jdic=.jnew("demetra.util.r.Dictionary")
+  jdic=.jnew("jdplus/toolkit/base/r/util/Dictionary")
   for(i in seq_along(xlist)){
-    .jcall(jdic, "V", "add", names(xlist[i]), rjd3toolkit::ts_r2jd(xlist[[i]]))
+    .jcall(jdic, "V", "add", names(xlist[i]), rjd3toolkit::.r2jd_ts(xlist[[i]]))
   }
   if (is.null(tcvector)){
     ntc=0
@@ -210,16 +210,16 @@ multivariatecholette<-function(xlist, tcvector=NULL, ccvector=NULL, rho=1, lambd
   if(ntc+ncc==0) {
     stop("both constraint types are empty, include at least one temporal or contemporaneous constraint")}
 
-  jd_rslt<-.jcall("demetra/benchmarking/r/Benchmarking", "Ldemetra/util/r/Dictionary;", "multiCholette"
+  jd_rslt<-.jcall("jdplus/benchmarking/base/r/Benchmarking", "Ljdplus/toolkit/base/r/util/Dictionary;", "multiCholette"
                   ,jdic,  jtc, jcc, rho, lambda)
   if (is.jnull(jd_rslt))
     return (NULL)
   rlist=list()
   rnames=.jcall(jd_rslt, "[S", "names")
   for(i in seq_along(rnames)){
-    jts<-.jcall(jd_rslt, "Ldemetra/timeseries/TsData;", "get", rnames[i])
+    jts<-.jcall(jd_rslt, "Ljdplus/toolkit/base/api/timeseries/TsData;", "get", rnames[i])
     if (! is.jnull(jts)){
-      rlist[[rnames[i]]]<-rjd3toolkit::ts_jd2r(jts)
+      rlist[[rnames[i]]]<-rjd3toolkit::.jd2r_ts(jts)
     }
   }
   return (rlist)

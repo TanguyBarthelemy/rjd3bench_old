@@ -51,30 +51,30 @@ temporaldisaggregation<-function(series, constant=T, trend=F, indicators=NULL,
   if (model!="Ar1" && !zeroinitialization){
     constant=F
   }
-  jseries<-rjd3toolkit::ts_r2jd(series)
+  jseries<-rjd3toolkit::.r2jd_ts(series)
   jlist<-list()
   if (!is.null(indicators)){
     if (is.list(indicators)){
       for (i in 1:length(indicators)){
-        jlist[[i]]<-rjd3toolkit::ts_r2jd(indicators[[i]])
+        jlist[[i]]<-rjd3toolkit::.r2jd_ts(indicators[[i]])
       }
     }else if (is.ts(indicators)){
-      jlist[[1]]<-rjd3toolkit::ts_r2jd(indicators)
+      jlist[[1]]<-rjd3toolkit::.r2jd_ts(indicators)
     }else{
       stop("Invalid indicators")
     }
-    jindicators<-.jarray(jlist, contents.class = "demetra/timeseries/TsData")
+    jindicators<-.jarray(jlist, contents.class = "jdplus/toolkit/base/api/timeseries/TsData")
   }else{
-    jindicators<-.jnull("[Ldemetra/timeseries/TsData;")
+    jindicators<-.jnull("[Ljdplus/toolkit/base/api/timeseries/TsData;")
   }
-  jrslt<-.jcall("demetra/benchmarking/r/TemporalDisaggregation", "Ljdplus/tempdisagg/univariate/TemporalDisaggregationResults;",
+  jrslt<-.jcall("jdplus/benchmarking/base/r/TemporalDisaggregation", "Ljdplus/benchmarking/base/core/univariate/TemporalDisaggregationResults;",
                 "process", jseries, constant, trend, jindicators, model, as.integer(freq), conversion, as.integer(conversion.obsposition),rho, rho.fixed, rho.truncated,
                 zeroinitialization, diffuse.algorithm, diffuse.regressors)
 
   # Build the S3 result
-  bcov<-rjd3toolkit::proc_matrix(jrslt, "covar")
-  vars<-rjd3toolkit::proc_vector(jrslt, "regnames")
-  coef<-rjd3toolkit::proc_vector(jrslt, "coeff")
+  bcov<-rjd3toolkit::.proc_matrix(jrslt, "covar")
+  vars<-rjd3toolkit::.proc_vector(jrslt, "regnames")
+  coef<-rjd3toolkit::.proc_vector(jrslt, "coeff")
   se<-sqrt(diag(bcov))
   t<-coef/se
   m<-data.frame(coef, se, t)
@@ -87,15 +87,15 @@ temporaldisaggregation<-function(series, constant=T, trend=F, indicators=NULL,
     cov=bcov
   )
   estimation<-list(
-    disagg=rjd3toolkit::proc_ts(jrslt, "disagg"),
-    edisagg=rjd3toolkit::proc_ts(jrslt, "edisagg"),
-    regeffect=rjd3toolkit::proc_ts(jrslt, "regeffect"),
-    smoothingpart=rjd3toolkit::proc_numeric(jrslt, "smoothingpart"),
-    parameter=rjd3toolkit::proc_numeric(jrslt, "parameter"),
-    eparameter=rjd3toolkit::proc_numeric(jrslt, "eparameter")
+    disagg=rjd3toolkit::.proc_ts(jrslt, "disagg"),
+    edisagg=rjd3toolkit::.proc_ts(jrslt, "edisagg"),
+    regeffect=rjd3toolkit::.proc_ts(jrslt, "regeffect"),
+    smoothingpart=rjd3toolkit::.proc_numeric(jrslt, "smoothingpart"),
+    parameter=rjd3toolkit::.proc_numeric(jrslt, "parameter"),
+    eparameter=rjd3toolkit::.proc_numeric(jrslt, "eparameter")
     # res= TODO
   )
-  likelihood<-rjd3toolkit::proc_likelihood(jrslt, "likelihood.")
+  likelihood<-rjd3toolkit::.proc_likelihood(jrslt, "likelihood.")
 
   return(structure(list(
     regression=regression,
@@ -137,14 +137,14 @@ temporaldisaggregationI<-function(series, indicator,
                          rho=0, rho.fixed=F, rho.truncated=0){
   # model=match.arg(model)
   conversion=match.arg(conversion)
-  jseries=rjd3toolkit::ts_r2jd(series)
+  jseries=rjd3toolkit::.r2jd_ts(series)
   jlist<-list()
-  jindicator<-rjd3toolkit::ts_r2jd(indicator)
-  jrslt<-.jcall("demetra/benchmarking/r/TemporalDisaggregation", "Ljdplus/tempdisagg/univariate/TemporalDisaggregationIResults;",
+  jindicator<-rjd3toolkit::.r2jd_ts(indicator)
+  jrslt<-.jcall("jdplus/benchmarking/base/r/TemporalDisaggregation", "Ljdplus/benchmarking/base/core/univariate/TemporalDisaggregationIResults;",
                 "processI", jseries, jindicator, "Ar1", conversion, as.integer(conversion.obsposition),rho, rho.fixed, rho.truncated)
   # Build the S3 result
-  a<-rjd3toolkit::proc_numeric(jrslt, "a")
-  b<-rjd3toolkit::proc_numeric(jrslt, "b")
+  a<-rjd3toolkit::.proc_numeric(jrslt, "a")
+  b<-rjd3toolkit::.proc_numeric(jrslt, "b")
 
   regression<-list(
     conversion=conversion,
@@ -152,10 +152,10 @@ temporaldisaggregationI<-function(series, indicator,
     b=b
   )
   estimation<-list(
-    disagg=rjd3toolkit::proc_ts(jrslt, "disagg"),
-    parameter=rjd3toolkit::proc_numeric(jrslt, "parameter")
+    disagg=rjd3toolkit::.proc_ts(jrslt, "disagg"),
+    parameter=rjd3toolkit::.proc_numeric(jrslt, "parameter")
   )
-  likelihood<-rjd3toolkit::proc_likelihood(jrslt, "likelihood.")
+  likelihood<-rjd3toolkit::.proc_likelihood(jrslt, "likelihood.")
 
   return(structure(list(
     regression=regression,

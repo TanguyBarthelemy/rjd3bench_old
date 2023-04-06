@@ -41,20 +41,20 @@ calendarization<-function(calendarobs, freq, start=NULL, end=NULL, dailyweights=
   }else{
     jend<-as.character(end)
   }
-  jrslt<-.jcall("demetra/benchmarking/r/Calendarization", "Ldemetra/calendarization/CalendarizationResults;",
+  jrslt<-.jcall("jdplus/benchmarking/base/r/Calendarization", "Ljdplus/benchmarking/base/api/calendarization/CalendarizationResults;",
                 "process", jcal, as.integer(freq), jstart, jend, jw, as.logical(stde))
 
   if (stde){
-    rslt<-rjd3toolkit::proc_ts(jrslt, "agg")
-    erslt<-rjd3toolkit::proc_ts(jrslt, "eagg")
-    start<-as.Date(rjd3toolkit::proc_str(jrslt, "start"))
-    days<-rjd3toolkit::proc_vector(jrslt, "days")
-    edays<-rjd3toolkit::proc_vector(jrslt, "edays")
+    rslt<-rjd3toolkit::.proc_ts(jrslt, "agg")
+    erslt<-rjd3toolkit::.proc_ts(jrslt, "eagg")
+    start<-as.Date(rjd3toolkit::.proc_str(jrslt, "start"))
+    days<-rjd3toolkit::.proc_vector(jrslt, "days")
+    edays<-rjd3toolkit::.proc_vector(jrslt, "edays")
     return (list(rslt=rslt, erslt=erslt, start=start,days=days, edays=edays))
   }else{
-    rslt<-rjd3toolkit::proc_ts(jrslt, "agg")
-    start<-as.Date(rjd3toolkit::proc_str(jrslt, "start"))
-    days<-rjd3toolkit::proc_vector(jrslt, "days")
+    rslt<-rjd3toolkit::.proc_ts(jrslt, "agg")
+    start<-as.Date(rjd3toolkit::.proc_str(jrslt, "start"))
+    days<-rjd3toolkit::.proc_vector(jrslt, "days")
     return (list(rslt=rslt, start=start,days=days))
   }
 }
