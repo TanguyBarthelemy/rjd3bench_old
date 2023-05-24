@@ -1,14 +1,17 @@
 Package: rjd3bench
 Type: Package
 Title: Interface to 'JDemetra+ 3.0' Seasonal Adjustment Software
-Version: 0.9.0
+Version: 0.9.1
 Authors@R: c(
   person("Jean", "Palate", role = c("aut", "cre"),
                 email = "jean.palate@nbb.be"))
 Description: Interface around 'JDemetra+ 3.x' sa-toolkit (<https://github.com/jdemetra/jdemetra-core>), STACE project 
-Depends: R (>= 3.6.0)
-Imports: rJava (>= 1.0-6), RProtoBuf (>= 0.4.17), rjd3toolkit (>=
-        2.9.0)
+Depends:
+  R (>= 3.6.0)
+Imports:
+  rJava (>= 1.0-6),
+  rjd3toolkit (>= 3.0.0),
+  RProtoBuf (>= 0.4.17)
 SystemRequirements: Java SE 8 or higher
 License: EUPL
 URL: https://github.com/jdemetra/rjd3sa
@@ -25,7 +28,4 @@ Collate:
     'tempdisagg.R'
     'zzz.R'
 NeedsCompilation: no
-Packaged: 2022-05-04 14:26:07 UTC; PALATEJ
-Author: Jean Palate [aut, cre]
-Maintainer: Jean Palate <jean.palate@nbb.be>
 VignetteBuilder: knitr
